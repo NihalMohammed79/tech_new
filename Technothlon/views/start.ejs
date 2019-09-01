@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title>Technothlon</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="bootstrap430.css">
+  <script src="jquery341.js"></script>
+  <script src="bootstrap337.js"></script>
+</head>
+
+<body background="/images/start.jpg">
+	<div class="container">
+		<h1 style="color:white; font-size: 50px; margin-top: 40%;" align="center"> <b> LET'S <a onclick="myfunction();" style="color: white; cursor: default; text-decoration: none;" >START</a> THE GAME! </b> </h1>
+    </div>
+    <script>
+        function myfunction(){
+            document.body.innerHTML += '<form id="dynForm" action="/start" method="POST"><input type="hidden" name="result" value="clicked"></form>';
+			      document.getElementById("dynForm").submit();
+        }
+    </script>
+</body>

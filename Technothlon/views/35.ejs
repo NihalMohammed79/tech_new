@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title>River Crossing Puzzle Level 35</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="bootstrap337.css">
+  <script src="socketio220.js"></script>
+  <script src="jquery341.js"></script>
+  <script src="bootstrap337.js"></script>
+  <style>
+    .btn-space {
+        margin: 5px;
+    }
+    .btn:hover {
+        box-shadow: 0 12px 16px 0 rgba(0,0,0,0.24), 0 17px 50px 0 rgba(0,0,0,0.19);
+    }
+    .box-container {
+        display: inline-grid;
+        grid-template-columns: auto auto auto auto auto auto auto auto auto;
+        grid-gap: 5px;
+        background-color: white;
+        padding: 10px;
+        margin-left: auto;
+    }
+    .innerBox {
+        background-color: #ffff66;
+        padding: 10px;
+        border: 1px solid black ;
+        padding: 42px;
+        border-radius: 20%;
+        opacity : 0.6;
+    }
+    .innerBox:hover {
+            box-shadow: 0 12px 16px 0 rgba(0,0,0,0.24), 0 17px 50px 0 rgba(0,0,0,0.19);
+            opacity: 1 ; 
+    }
+    .text{
+        font-size: 40px;
+    }
+    #submit {
+        margin-left :50%;
+    }
+    .vanish{
+        visibility : hidden;
+    }
+  </style>
+</head>
+<body>
+    <nav class="navbar navbar-inverse">
+        <div class="container-fluid">
+        <!-- Brand and toggle get grouped for better mobile display -->
+        <div class="navbar-header">
+            <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1" aria-expanded="false">
+            <span class="sr-only">Toggle navigation</span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="#">Technothlon</a>
+        </div>
+        <!-- Collect the nav links, forms, and other content for toggling -->
+        <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+            <ul class="nav navbar-nav">
+                <li class="dropdown">
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Level Stats <span class="caret"></span></a>
+                    <ul style="text-align: center; width: 250px;" class="dropdown-menu">
+                        <li>Level Name: Logic 35</li>
+                        <li role="separator" class="divider"></li>
+                        <li>maximum Marks: 30 marks</li>
+                        <li role="separator" class="divider"></li>
+                        <li>Deduction On Hint 1: 0 marks</li>
+                        <li role="separator" class="divider"></li>
+                        <li>Deduction On Hint 2: 0 marks</li>
+                        <li role="separator" class="divider"></li>
+                        <li>Deduction On Skip: 10 marks</li>
+                        <li role="separator" class="divider"></li>
+                        <li>Deduction On Wrong Answer: 2 marks</li>
+                        <li role="separator" class="divider"></li>
+                    </ul>
+                </li>
+            </ul>
+            <ul class="nav navbar-nav navbar-right">
+            <li><a href="/profile">View Profile</a></li>
+            <li class="dropdown">
+                <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Hint <span class="caret"></span></a>
+                <ul class="dropdown-menu" style="width: 200px;">
+                <div style="text-align: center;" id="hintbox">
+                    <label for="hint">Type 'hint' in the box below to get a hint</label>
+                    <input style="width: 150px;" type="text" name="hint" id="hint">
+                    <button style="margin-top: 5px;" id="hintbutton" onclick="hintfunction()" type="submit">Submit</button>
+                </div>
+                </ul>
+            </li>
+            <li class="dropdown">
+                <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Skip <span class="caret"></span></a>
+                <ul class="dropdown-menu" style="width: 200px;">
+                    <form style="text-align: center;" action="/skip" method="POST">
+                        <label for="hint">Type 'skip' in the box below to skip this level</label>
+                        <input style="width: 150px;" type="text" name="skip" id="skip">
+                        <button style="margin-top: 5px;" type="submit">Submit</button>
+                    </form>
+                </ul>
+            </li>
+            </ul>
+        </div><!-- /.navbar-collapse -->
+        </div><!-- /.container-fluid -->
+    </nav>
+	<div class="container">
+   		<div class="text-center text-dark bg-succcess"><h1>Your task is to clear the board filled with number from 0 to 11, by matching and connecting 2 same numbers in the same row or column, After the connection is made, everything inside the selection will be cleared.</h1>
+           </div>
+           <h3>If you get stuck and want to retry the level then click submit.</h3>
+   		<div class="box-container" align="center"></div>
+      <button type="button" onclick ="submit()" id="submit" class="btn btn-space btn-lg btn-success" >SUBMIT</button>
+
+  </div>
+  <script type="text/javascript">
+  var socket = io.connect("http://10.150.38.192:4000/");
+    var hintinput = document.getElementById("hint");
+    var hintbutton = document.getElementById("hintbutton");
+    var hintbox = document.getElementById("hintbox");
+    var id = "<%= user.socketid %>";
+    function hintfunction(){
+        if(hintinput.value == "hint") {
+            console.log(socket.id);
+                socket.emit("hint", {
+                id: id,
+                toid: socket.id
+            });
+        }
+    };
+    socket.on("hintres", function(data){
+        console.log(data.hint);
+        hintbox.innerHTML += '<li>Hint: '+ data.hint + '</li><li role="separator" class="divider"></li>';
+    });
+    var n=9;
+numbers = [1,1,2,3,2,4,4,4,6,2,2,4,5,4,7,8,4,6,5,5,1,5,1,2,4,9,6,5,3,1,5,3,6,3,10,5,1,5,11,4,8,3,2,1,1,6,3,5,5,4,10,3,5,9,5,7,7,8,3,4,2,11,6,3,8,11,3,5,3,2,10,4,2,8,8,2,1,2,1,4,5];
+selected_corners = [];
+
+function click(){
+	if(this.classList.contains("temp")){
+	if(this.classList.contains("selected")){
+		   this.style.opacity = 0.6;
+		   this.classList.remove("selected");
+		   selected_corners = [];
+	}else {
+	this.style.opacity = 1;
+	this.classList.add("selected");
+	selected_corners.push(Number(this.id.slice(3)));
+	if(selected_corners.length == 2) vanish(); 
+	}	
+				}
+			}						  
+
+function vanish(){
+	if(document.getElementById("Box" + selected_corners[0]).textContent == document.getElementById("Box" + selected_corners[1]).textContent){	
+		 var min = Math.min.apply(Math, selected_corners);  console.log(min);
+         var max = Math.max.apply(Math, selected_corners);  console.log(max);
+            if((max-min)%n !=0  &&  (max-min)<=(n-(min%n))  && (max !=80 && min !=72)){ for(var i= min; i<= max; i++) {
+                    var b=document.getElementById("Box"+ i);
+                    b.style.background = "grey"; 
+                    b.classList.remove("temp");
+                    b.classList.add("vanish");
+                }
+                selected_corners=[];										    				 													    
+                }else if((max-min)%n == 0) {for(var i= min; i<= max; i+=n){
+                            var b=document.getElementById("Box"+ i);
+                            b.style.background = "grey";
+                            b.classList.remove("temp");  
+                            b.classList.add("vanish");  }         				 		
+                selected_corners=[];				            				 													    
+                }
+                else if(max == 80 && min == 72){
+         		   				alert("Select only 2 boxes in a line");
+            					for(var i=0; i<selected_corners.length; i++)  	document.getElementById("Box"+selected_corners[i]).style.opacity = 0.6;
+            	  				selected_corners=[];
+         		   }
+                else{
+                    alert("Select only 2 boxes in a line");
+                    for(var i=0; i<selected_corners.length; i++)  	document.getElementById("Box"+selected_corners[i]).style.opacity = 0.6;
+                    selected_corners=[];
+
+                }
+        }else{
+                for(var i=0; i<selected_corners.length; i++)  	document.getElementById("Box"+selected_corners[i]).style.opacity = 0.6;
+                selected_corners=[];
+        }		
+}
+
+function submit(){
+        document.body.innerHTML += '<form id="dynForm" action="/35" method="post"><input type="hidden" name="result" value="' + $(".box-container .temp").length + '"></form>';
+		document.getElementById("dynForm").submit();
+}
+
+var box = document.querySelector(".box-container");
+for (var i = 1; i<=n*n; i++){
+	var newBox = document.createElement("div");
+	var textBox = document.createElement("p");
+	textBox.classList.add("text");
+	newBox.appendChild(textBox);
+	textBox.innerHTML= "<b>"+numbers[i-1] + "</b>";
+	newBox.onclick = click;
+	newBox.classList.add("innerBox");
+	newBox.classList.add("temp");
+	newBox.id = "Box"+ i;
+	box.appendChild(newBox);
+
+}
+  </script>
+</body>          
