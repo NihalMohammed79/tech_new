@@ -384,6 +384,8 @@ app.post("/skip", isLoggedIn, function(req, res){
 	var user = req.user;
 	var skip = req.body.skip;
 	var level = user.currentLevel;
+	user.hint1 = false;
+	user.hint2 = false;
 	if(skip == "skip"){
 		user.score -= skipdeds[level - 1];
 		user.currentLevel += 1;
